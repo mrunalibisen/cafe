@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arco Café — Where Every Cup Tells a Story</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <nav id="navbar">
+        <div class="nav-logo">Arco<span>.</span></div>
+        <ul class="nav-links">
+            <li><a href="menu.html">Menu</a></li>
+            <li><a href="order.html">Order Online</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <a href="#reserve" class="nav-cta">Reserve a Table</a>
+        <div class="hamburger" id="hamburger" onclick="openDrawer()">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <!-- MOBILE DRAWER -->
+    <div class="mobile-drawer" id="drawer">
+        <div class="drawer-top">
+            <div class="nav-logo" style="color:var(--cream)">Arco<span style="color:var(--gold)">.</span></div>
+            <button class="drawer-close" onclick="closeDrawer()">✕</button>
+        </div>
+        <ul class="drawer-links">
+            <li><a href="menu.html" onclick="closeDrawer()">Menu</a></li>
+            <li><a href="order.html" onclick="closeDrawer()">Order Online</a></li>
+            <li><a href="#about" onclick="closeDrawer()">About</a></li>
+            <li><a href="gallery.html" onclick="closeDrawer()">Gallery</a></li>
+            <li><a href="#contact" onclick="closeDrawer()">Contact</a></li>
+        </ul>
+        <div class="drawer-cta">
+            <a href="#reserve" class="btn-primary" onclick="closeDrawer()">Reserve a Table</a>
+        </div>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero" id="hero">
+        <div class="hero-bg" id="heroBg"></div>
+
+        <!-- Signature arch frame -->
+        <div class="hero-arch" id="heroArch">
+            <div class="hero-arch-inner"></div>
+            <div class="arch-led"></div>
+        </div>
+
+        <div class="hero-content" id="heroContent">
+            <div class="hero-eyebrow">Est. 2021 — Arco Café</div>
+            <h1 class="hero-h1">
+                Where every cup<br><em>tells a story.</em>
+            </h1>
+            <p class="hero-sub">
+                Handcrafted coffee, fresh plates, and warm arched alcoves — a corner of the city that slows you down.
+            </p>
+            <div class="hero-actions">
+                <a href="menu.html" class="btn-primary">Explore Menu</a>
+                <a href="#reserve" class="btn-ghost">
+                    Reserve a table
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+        <div class="hero-scroll">
+            <div class="scroll-line"></div>
+            Scroll to explore
+        </div>
+    </section>
+
+    <!-- TODAY'S SPECIALS -->
+    <section class="specials" id="menu">
+        <div class="section-label">Fresh Today</div>
+        <h2 class="section-title">Today's Specials</h2>
+        <p class="section-sub">Pulled live from our kitchen — updated every morning.</p>
+
+        <div class="specials-grid" id="specialsGrid">
+            <!-- Skeleton placeholders -->
+            <div class="special-card" style="opacity:1;transform:none;">
+                <div class="special-img skeleton" style="min-height:200px;border-radius:0;"></div>
+                <div class="special-body">
+                    <div class="skeleton" style="height:18px;width:60%;margin-bottom:8px;"></div>
+                    <div class="skeleton" style="height:12px;width:90%;margin-bottom:4px;"></div>
+                    <div class="skeleton" style="height:12px;width:70%;margin-bottom:16px;"></div>
+                    <div class="skeleton" style="height:16px;width:30%;"></div>
+                </div>
+            </div>
+            <div class="special-card" style="opacity:1;transform:none;">
+                <div class="special-img skeleton" style="min-height:200px;border-radius:0;"></div>
+                <div class="special-body">
+                    <div class="skeleton" style="height:18px;width:55%;margin-bottom:8px;"></div>
+                    <div class="skeleton" style="height:12px;width:85%;margin-bottom:4px;"></div>
+                    <div class="skeleton" style="height:12px;width:60%;margin-bottom:16px;"></div>
+                    <div class="skeleton" style="height:16px;width:30%;"></div>
+                </div>
+            </div>
+            <div class="special-card" style="opacity:1;transform:none;">
+                <div class="special-img skeleton" style="min-height:200px;border-radius:0;"></div>
+                <div class="special-body">
+                    <div class="skeleton" style="height:18px;width:65%;margin-bottom:8px;"></div>
+                    <div class="skeleton" style="height:12px;width:80%;margin-bottom:4px;"></div>
+                    <div class="skeleton" style="height:12px;width:50%;margin-bottom:16px;"></div>
+                    <div class="skeleton" style="height:16px;width:30%;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="about-strip" id="about">
+        <div class="about-img-wrap reveal-left">
+            <!-- Replace src with real cafe photo -->
+            <div class="about-img-main"
+                style="min-height:420px; background:linear-gradient(135deg,#C8E6E7 0%,#5B9EA0 60%,#3D7A7C 100%);border-radius:4px 40px 4px 4px;">
+            </div>
+            <div class="about-arch-accent"></div>
+        </div>
+        <div class="about-text reveal-right">
+            <div class="section-label">Our Story</div>
+            <h2 class="section-title">A space built<br>for slow mornings.</h2>
+            <p class="about-body">
+                Arco began with one idea: that a café should feel like a friend's living room — unhurried, warm, and
+                full of good things. Every arch on our wall was plastered by hand. Every blend in your cup was chosen
+                with care.
+            </p>
+            <div class="about-stats">
+                <div>
+                    <div class="stat-num">40+</div>
+                    <div class="stat-label">Menu items</div>
+                </div>
+                <div>
+                    <div class="stat-num">3 yr</div>
+                    <div class="stat-label">Brewing since</div>
+                </div>
+                <div>
+                    <div class="stat-num">4.9★</div>
+                    <div class="stat-label">Guest rating</div>
+                </div>
+            </div>
+            <a href="#" class="btn-teal">Meet the team</a>
+        </div>
+    </section>
+
+    <!-- INFO BAR (hours, address, phone — GAS-ready) -->
+    <div class="info-bar" id="infoBar">
+        <div class="info-item">
+            <div class="info-label">Opening Hours</div>
+            <div class="info-value" id="infoHours">
+                Mon – Sat: 8am – 10pm
+                <small>Sun: 9am – 8pm</small>
+            </div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">Find Us</div>
+            <div class="info-value" id="infoAddress">
+                Shop 4, Greenway Market<br>
+                <small id="infoCity">Nagpur, Maharashtra</small>
+            </div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">Reservations</div>
+            <div class="info-value">
+                <a href="tel:+919876543210" style="color:var(--gold)">+91 98765 43210</a>
+                <small>or book online below</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- REVIEWS -->
+    <section class="reviews" id="reviews">
+        <div class="section-label" style="color:var(--teal-deep)">
+            <span style="display:inline-flex;align-items:center;gap:8px;">
+                <span style="display:block;width:20px;height:1px;background:var(--teal-deep)"></span>
+                What guests say
+            </span>
+        </div>
+        <h2 class="section-title" style="color:var(--text-dark)">Loved by the neighbourhood.</h2>
+
+        <div class="reviews-track-wrap">
+            <div class="reviews-track" id="reviewsTrack">
+                <!-- Duplicated for seamless loop — JS will fill from GAS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section class="gallery-strip" id="gallery">
+        <div class="section-label" style="color:var(--teal-deep)">
+            <span style="display:inline-flex;align-items:center;gap:8px;">
+                <span style="display:block;width:20px;height:1px;background:var(--teal-deep)"></span>
+                Gallery
+            </span>
+        </div>
+        <h2 class="section-title" style="color:var(--text-dark)">Inside Arco.</h2>
+
+        <div class="gallery-grid">
+            <a href="gallery.html" class="gallery-item">
+                <div class="gallery-placeholder"
+                    style="min-height:360px;background:linear-gradient(135deg,#C8E6E7,#5B9EA0);">☕</div>
+                <div class="gallery-overlay">
+                    <div class="gallery-overlay-icon">⊕</div>
+                </div>
+            </a>
+            <a href="gallery.html" class="gallery-item">
+                <div class="gallery-placeholder">🥗</div>
+                <div class="gallery-overlay">
+                    <div class="gallery-overlay-icon">⊕</div>
+                </div>
+            </a>
+            <a href="gallery.html" class="gallery-item">
+                <div class="gallery-placeholder" style="background:linear-gradient(135deg,#D4A843,#C8A97A);">🧁</div>
+                <div class="gallery-overlay">
+                    <div class="gallery-overlay-icon">⊕</div>
+                </div>
+            </a>
+            <a href="gallery.html" class="gallery-item">
+                <div class="gallery-placeholder" style="background:linear-gradient(135deg,#5B9EA0,#3D7A7C);">🪴</div>
+                <div class="gallery-overlay">
+                    <div class="gallery-overlay-icon">⊕</div>
+                </div>
+            </a>
+            <a href="gallery.html" class="gallery-item">
+                <div class="gallery-placeholder" style="background:linear-gradient(135deg,#3D7A7C,#0E2425);">🕯️</div>
+                <div class="gallery-overlay">
+                    <div class="gallery-overlay-icon">⊕</div>
+                </div>
+            </a>
+        </div>
+        <div class="gallery-cta">
+            <a href="gallery.html" class="btn-teal" style="display:inline-block;margin-top:1rem;">View full gallery</a>
+        </div>
+    </section>
+
+    <!-- CTA BANNER -->
+    <section class="cta-banner" id="reserve">
+        <div class="cta-arch"></div>
+        <div class="section-label" style="color:var(--gold);justify-content:center;">
+            Book a table
+        </div>
+        <h2 class="section-title" style="margin-bottom:0.5rem;">Come sit with us.</h2>
+        <p class="section-sub" style="color:var(--text-muted);">
+            Reserve your favourite spot — window seat, arch alcove, or open floor.
+        </p>
+        <div class="cta-actions">
+            <a href="reservation.html" class="btn-primary">Book Online</a>
+            <a href="tel:+919876543210" class="btn-ghost" style="color:var(--cream);">
+                Call us directly
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+            </a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="contact">
+        <div>
+            <div class="footer-logo">Arco<span>.</span></div>
+            <p class="footer-tagline">Handcrafted coffee and warm spaces<br>in the heart of the city.</p>
+        </div>
+        <div class="footer-col">
+            <div class="footer-col-title">Explore</div>
+            <a href="menu.html">Menu</a>
+            <a href="order.html">Order Online</a>
+            <a href="#about">About</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="#reserve">Reservations</a>
+        </div>
+        <div class="footer-col">
+            <div class="footer-col-title">Hours</div>
+            <a>Mon–Sat: 8am–10pm</a>
+            <a>Sunday: 9am–8pm</a>
+            <a>Public holidays: 10am–7pm</a>
+        </div>
+        <div class="footer-col">
+            <div class="footer-col-title">Contact</div>
+            <a href="tel:+919876543210">+91 98765 43210</a>
+            <a href="mailto:hello@arcocafe.in">hello@arcocafe.in</a>
+            <a href="#">Instagram</a>
+            <a href="#">Google Maps</a>
+        </div>
+    </footer>
+    <div class="footer-bottom">
+        <span>© 2025 Arco Café. All rights reserved.</span>
+        <span>Made with ☕</span>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        /* ─── NAV SCROLL ─────────────────────────────────── */
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.scrollY > 50);
+        }, { passive: true });
+
+        /* ─── PARALLAX ───────────────────────────────────── */
+        const heroBg = document.getElementById('heroBg');
+        window.addEventListener('scroll', () => {
+            const y = window.scrollY;
+            if (y < window.innerHeight) {
+                heroBg.style.transform = `scale(1.06) translateY(${y * 0.2}px)`;
+            }
+        }, { passive: true });
+
+        /* ─── HERO ENTRANCE ──────────────────────────────── */
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('heroContent').classList.add('visible');
+                document.getElementById('heroArch').classList.add('visible');
+            }, 100);
+        });
+
+        /* ─── INTERSECTION OBSERVER ──────────────────────── */
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    // Stagger children if it's specials grid
+                    if (e.target.classList.contains('specials-grid')) {
+                        e.target.querySelectorAll('.special-card').forEach((c, i) => {
+                            setTimeout(() => c.classList.add('visible'), i * 120);
+                        });
+                    }
+                }
+            });
+        }, { threshold: 0.12 });
+
+        document.querySelectorAll('.reveal-left, .reveal-right, .special-card, .specials-grid').forEach(el => {
+            el.classList.add('about-img-wrap', 'about-text'); // already set
+            io.observe(el);
+        });
+        // re-observe properly
+        document.querySelectorAll('.about-img-wrap, .about-text').forEach(el => io.observe(el));
+
+        /* ─── MOBILE DRAWER ──────────────────────────────── */
+        function openDrawer() { document.getElementById('drawer').classList.add('open'); }
+        function closeDrawer() { document.getElementById('drawer').classList.remove('open'); }
+
+        /* ─── LOAD SPECIALS FROM GAS ─────────────────────── */
+        async function loadSpecials() {
+            if (!GAS_URL || GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE') {
+                renderFallbackSpecials();
+                return;
+            }
+            try {
+                const res = await fetch(`${GAS_URL}?action=menu&limit=3&special=true`);
+                const data = await res.json();
+                if (data.items && data.items.length) renderSpecials(data.items.slice(0, 3));
+                else renderFallbackSpecials();
+            } catch {
+                renderFallbackSpecials();
+            }
+        }
+
+        function renderSpecials(items) {
+            const grid = document.getElementById('specialsGrid');
+            grid.innerHTML = items.map(item => `
+    <div class="special-card">
+      <div class="special-img">
+        ${item.image_url
+                    ? `<img src="${item.image_url}" alt="${item.name}" loading="lazy" />`
+                    : `<span style="font-size:2.5rem">${categoryEmoji(item.category)}</span>`}
+        <span class="badge-today">Today</span>
+      </div>
+      <div class="special-body">
+        <div class="special-name">${item.name}</div>
+        <div class="special-desc">${item.description || ''}</div>
+        <div class="special-footer">
+          <div class="special-price">₹${item.price}</div>
+          <span class="special-tag">${item.category}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+            grid.querySelectorAll('.special-card').forEach((c, i) => {
+                setTimeout(() => c.classList.add('visible'), i * 120);
+            });
+        }
+
+        function renderFallbackSpecials() {
+            const items = [
+                { name: 'Teal Latte', category: 'Coffee', price: '180', description: 'Butterfly pea flower & oat milk — our signature sip.', emoji: '☕' },
+                { name: 'Arch Toastie', category: 'Food', price: '220', description: 'Grilled sourdough, smoked cheese & caramelised onion.', emoji: '🥪' },
+                { name: 'Basque Cheesecake', category: 'Dessert', price: '160', description: 'Burnt top, silky centre — baked fresh each morning.', emoji: '🍰' },
+            ];
+            renderSpecials(items.map(i => ({ ...i, image_url: null })));
+        }
+
+        function categoryEmoji(cat) {
+            const map = { Coffee: '☕', Drinks: '🧋', Food: '🥗', Dessert: '🍰', Desserts: '🍰' };
+            return map[cat] || '🍽️';
+        }
+
+        /* ─── LOAD REVIEWS FROM GAS ──────────────────────── */
+        const FALLBACK_REVIEWS = [
+            { name: 'Priya S.', rating: 5, message: 'The arch walls make it feel like you stepped into Europe. Coffee is brilliant too.' },
+            { name: 'Rohan M.', rating: 5, message: 'Best basque cheesecake in the city, hands down. The teal latte is gorgeous.' },
+            { name: 'Ananya K.', rating: 5, message: 'Perfect for work dates. Ambience is unmatched — quiet, warm, and beautiful.' },
+            { name: 'Vikram T.', rating: 5, message: 'Came for coffee, stayed three hours. Staff is incredible and the food is fresh.' },
+            { name: 'Sana R.', rating: 5, message: 'Those arched alcoves with the warm lights — I\'ve never seen a café this pretty.' },
+            { name: 'Dev N.', rating: 5, message: 'Our go-to spot every Sunday. The sourdough toastie is top tier.' },
+        ];
+
+        async function loadReviews() {
+            let reviews = FALLBACK_REVIEWS;
+            if (GAS_URL && GAS_URL !== 'YOUR_GAS_WEB_APP_URL_HERE') {
+                try {
+                    const res = await fetch(`${GAS_URL}?action=reviews`);
+                    const data = await res.json();
+                    if (data.reviews && data.reviews.length >= 3) reviews = data.reviews;
+                } catch { }
+            }
+            renderReviews(reviews);
+        }
+
+        function renderReviews(reviews) {
+            const stars = n => '★'.repeat(n) + '☆'.repeat(5 - n);
+            const card = r => `
+    <div class="review-card">
+      <div class="review-stars">${stars(r.rating || 5)}</div>
+      <div class="review-text">"${r.message}"</div>
+      <div class="review-author">
+        <div class="review-avatar">${(r.name || 'G')[0]}</div>
+        <div>
+          <div class="review-name">${r.name}</div>
+          <div class="review-date">${r.date || 'Verified Guest'}</div>
+        </div>
+      </div>
+    </div>
+  `;
+            // Duplicate for seamless loop
+            const html = [...reviews, ...reviews].map(card).join('');
+            document.getElementById('reviewsTrack').innerHTML = html;
+        }
+
+        /* ─── LOAD SETTINGS FROM GAS ─────────────────────── */
+        async function loadSettings() {
+            if (!GAS_URL || GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE') return;
+            try {
+                const res = await fetch(`${GAS_URL}?action=settings`);
+                const data = await res.json();
+                const s = data.settings || {};
+                if (s.opening_hours) document.getElementById('infoHours').textContent = s.opening_hours;
+                if (s.address) document.getElementById('infoAddress').textContent = s.address;
+            } catch { }
+        }
+
+        /* ─── INIT ───────────────────────────────────────── */
+        loadSpecials();
+        loadReviews();
+        loadSettings();
+    </script>
+</body>
+
+</html>
