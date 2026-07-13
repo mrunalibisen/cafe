@@ -327,27 +327,29 @@
             }, 100);
         });
 
-        /* ─── INTERSECTION OBSERVER ──────────────────────── */
+        /* ─── INTERSECTION OBSERVER (scroll reveal) ──────── */
         const io = new IntersectionObserver((entries) => {
             entries.forEach(e => {
                 if (e.isIntersecting) {
                     e.target.classList.add('visible');
-                    // Stagger children if it's specials grid
+                    // Stagger children if it's the specials grid
                     if (e.target.classList.contains('specials-grid')) {
                         e.target.querySelectorAll('.special-card').forEach((c, i) => {
                             setTimeout(() => c.classList.add('visible'), i * 120);
                         });
                     }
+                    // Reveal only needs to happen once — stop watching so it
+                    // never gets re-toggled while scrolling up/down.
+                    io.unobserve(e.target);
                 }
             });
         }, { threshold: 0.12 });
 
-        document.querySelectorAll('.reveal-left, .reveal-right, .special-card, .specials-grid').forEach(el => {
-            el.classList.add('about-img-wrap', 'about-text'); // already set
-            io.observe(el);
-        });
-        // re-observe properly
-        document.querySelectorAll('.about-img-wrap, .about-text').forEach(el => io.observe(el));
+        // Only observe the elements that actually have fade/slide-in CSS
+        // (about-img-wrap, about-text, specials-grid). Special cards are
+        // revealed via the specials-grid callback above, or directly by
+        // renderSpecials() once real data loads.
+        document.querySelectorAll('.about-img-wrap, .about-text, .specials-grid').forEach(el => io.observe(el));
 
         /* ─── MOBILE DRAWER ──────────────────────────────── */
         function openDrawer() { document.getElementById('drawer').classList.add('open'); }
@@ -355,7 +357,7 @@
 
         /* ─── LOAD SPECIALS FROM GAS ─────────────────────── */
         async function loadSpecials() {
-            if (!GAS_URL || GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE') {
+            if (!GAS_URL || GAS_URL === 'https://script.google.com/macros/s/AKfycbxWu3gtyurAKShGUjwhjNaKetC2pD51Fil1Qu6phuqwPJgFF6KRhtkLHOg8I4FCEjcc/exec') {
                 renderFallbackSpecials();
                 return;
             }
@@ -452,7 +454,7 @@
 
         /* ─── LOAD SETTINGS FROM GAS ─────────────────────── */
         async function loadSettings() {
-            if (!GAS_URL || GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE') return;
+            if (!GAS_URL || GAS_URL === 'https://script.google.com/macros/s/AKfycbxWu3gtyurAKShGUjwhjNaKetC2pD51Fil1Qu6phuqwPJgFF6KRhtkLHOg8I4FCEjcc/exec') return;
             try {
                 const res = await fetch(`${GAS_URL}?action=settings`);
                 const data = await res.json();

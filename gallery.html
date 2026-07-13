@@ -373,7 +373,8 @@ document.addEventListener('keydown', (e) => {
 
 // ── LOAD GALLERY FROM GAS ──────────────────────────────
 async function loadGallery() {
-  if (!GAS_URL || GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE') {
+  if (!GAS_URL || GAS_URL === 'https://script.google.com/macros/s/AKfycbxWu3gtyurAKShGUjwhjNaKetC2pD51Fil1Qu6phuqwPJgFF6KRhtkLHOg8I4FCEjcc/exec')
+  {
     loadFallback(); return;
   }
   try {

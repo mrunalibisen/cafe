@@ -1074,7 +1074,7 @@
       btnTxt.textContent = 'Sending…';
 
       try {
-        if (GAS_URL && GAS_URL !== 'YOUR_GAS_WEB_APP_URL_HERE') {
+        if (GAS_URL && GAS_URL !== 'https://script.google.com/macros/s/AKfycbxWu3gtyurAKShGUjwhjNaKetC2pD51Fil1Qu6phuqwPJgFF6KRhtkLHOg8I4FCEjcc/exec') {
           const res = await fetch(GAS_URL, {
             method: 'POST',
             body: JSON.stringify(payload),

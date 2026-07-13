@@ -5,4 +5,4 @@
      <script src="app.js"></script>
    ═══════════════════════════════════════════════════════════════ */
 
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbw0gGaBz-3QRPY0XhUe0BLwvmGNpy6HjDrR_vSoAXU8pv6GW8dNmmFDoIw0xJvtwXy_/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxWu3gtyurAKShGUjwhjNaKetC2pD51Fil1Qu6phuqwPJgFF6KRhtkLHOg8I4FCEjcc/exec';

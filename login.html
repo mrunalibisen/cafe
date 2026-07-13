@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Orders Dashboard — Arco Café</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{padding-bottom:0;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;}
+
+/* ─── LOGIN SCREEN ─────────────────────────────────── */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--teal-bg);padding:1.5rem;position:relative;overflow:hidden;}
+.login-wrap::before{content:'';position:absolute;top:-80px;right:-80px;width:340px;height:340px;background:radial-gradient(circle,rgba(212,168,67,.12) 0%,transparent 70%);border-radius:50%;}
+.login-card{background:var(--cream);border-radius:20px;padding:2.75rem 2.25rem;max-width:380px;width:100%;position:relative;z-index:1;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.login-logo{font-family:var(--font-display);font-size:1.9rem;color:var(--teal-deep);text-align:center;margin-bottom:.25rem;}
+.login-logo span{color:var(--gold);}
+.login-sub{text-align:center;font-size:12.5px;color:var(--text-muted);margin-bottom:2rem;}
+.form-group{margin-bottom:1.1rem;}
+.form-label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text-mid);margin-bottom:.4rem;display:block;}
+.form-input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid rgba(91,158,160,.25);background:#fff;font-size:14px;font-family:inherit;color:var(--text-dark);}
+.form-input:focus{outline:none;border-color:var(--teal-deep);}
+.login-btn{width:100%;background:var(--teal-deep);color:#fff;font-size:14px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:14px;border-radius:50px;transition:.2s;margin-top:.5rem;display:flex;align-items:center;justify-content:center;gap:8px;}
+.login-btn:hover{background:var(--teal);}
+.login-btn:disabled{opacity:.6;cursor:not-allowed;}
+.login-error{font-size:12px;color:#c0392b;text-align:center;margin-top:.9rem;display:none;}
+.login-error.show{display:block;}
+.spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none;}
+.spinner.show{display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ─── FADE TRANSITION (login <-> dashboard) ───────── */
+/* Fixed: both states use opacity+visibility (not display) so the
+   fade actually animates instead of popping in/out abruptly. */
+.view{
+  opacity:0;
+  visibility:hidden;
+  position:fixed;
+  inset:0;
+  transition:opacity .45s ease, visibility 0s linear .45s;
+  pointer-events:none;
+}
+.view.active{
+  opacity:1;
+  visibility:visible;
+  position:relative;
+  inset:auto;
+  transition:opacity .45s ease, visibility 0s linear 0s;
+  pointer-events:auto;
+}
+
+/* ─── DASHBOARD ────────────────────────────────────── */
+.dash-header{background:var(--teal-bg);padding:2.25rem 3rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.dash-title{font-family:var(--font-display);font-size:2rem;font-weight:300;color:var(--cream);}
+.dash-actions{display:flex;gap:.75rem;align-items:center;}
+.icon-btn{width:38px;height:38px;border-radius:50%;background:rgba(245,240,232,.12);color:var(--cream);display:flex;align-items:center;justify-content:center;transition:.2s;}
+.icon-btn:hover{background:rgba(245,240,232,.22);}
+.logout-btn{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--teal-bg);background:var(--gold);padding:10px 20px;border-radius:50px;transition:.2s;}
+.logout-btn:hover{background:#e8bc5a;}
+
+.dash-body{padding:2rem 3rem;max-width:1400px;margin:0 auto;}
+
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem;}
+.stat-card{background:#fff;border-radius:16px;padding:1.4rem 1.5rem;border:1px solid rgba(91,158,160,.12);}
+.stat-label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.5rem;}
+.stat-value{font-family:var(--font-display);font-size:1.9rem;color:var(--teal-deep);font-weight:600;}
+.stat-sub{font-size:11px;color:var(--text-muted);margin-top:.25rem;}
+
+.toolbar{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1.5rem;align-items:center;}
+.toolbar input,.toolbar select{padding:10px 16px;border-radius:50px;border:1px solid rgba(91,158,160,.25);background:#fff;font-size:13px;font-family:inherit;color:var(--text-dark);}
+.toolbar input{flex:1;min-width:200px;}
+.toolbar input:focus,.toolbar select:focus{outline:none;border-color:var(--teal-deep);}
+.refresh-btn{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:var(--teal-deep);padding:10px 20px;border-radius:50px;transition:.2s;display:flex;align-items:center;gap:6px;}
+.refresh-btn:hover{background:var(--teal);}
+.refresh-btn.loading svg{animation:spin 1s linear infinite;}
+
+.orders-wrap{background:#fff;border-radius:16px;border:1px solid rgba(91,158,160,.12);overflow:hidden;}
+table{width:100%;border-collapse:collapse;}
+thead{background:rgba(91,158,160,.06);}
+th{text-align:left;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-mid);padding:12px 16px;white-space:nowrap;}
+td{padding:14px 16px;font-size:13px;color:var(--text-dark);border-top:1px solid rgba(91,158,160,.08);vertical-align:top;}
+tbody tr{cursor:pointer;transition:.15s;}
+tbody tr:hover{background:rgba(91,158,160,.05);}
+.ord-id{font-family:var(--font-display);font-weight:600;color:var(--teal-deep);}
+.ord-total{font-family:var(--font-display);font-weight:600;color:var(--text-dark);}
+.pill{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;padding:3px 10px;border-radius:20px;}
+.pill-pickup{background:rgba(91,158,160,.15);color:var(--teal-deep);}
+.pill-delivery{background:rgba(212,168,67,.18);color:#a17d1f;}
+.pill-cod{background:rgba(91,158,160,.1);color:var(--text-mid);}
+.pill-upi{background:rgba(77,138,82,.15);color:#3a6b3e;}
+.pill-card{background:rgba(140,100,200,.15);color:#6a4a9e;}
+
+.items-detail{display:none;background:rgba(91,158,160,.04);}
+.items-detail.show{display:table-row;}
+.items-detail td{padding:0 16px 16px;}
+.items-detail-inner{font-size:12.5px;color:var(--text-mid);padding:.75rem 1rem;background:#fff;border-radius:10px;border:1px solid rgba(91,158,160,.1);}
+.items-detail-inner div{display:flex;justify-content:space-between;padding:3px 0;}
+
+.empty-msg,.loading-msg{text-align:center;padding:3.5rem 1rem;color:var(--text-muted);font-size:13px;}
+.loading-msg .spin-icon{display:inline-block;width:18px;height:18px;border:2px solid rgba(91,158,160,.25);border-top-color:var(--teal-deep);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:.75rem;}
+
+/* mobile cards */
+.mobile-orders{display:none;}
+.order-card-m{background:#fff;border-radius:14px;padding:1rem 1.1rem;border:1px solid rgba(91,158,160,.12);margin-bottom:.8rem;}
+.order-card-m .m-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;}
+.order-card-m .m-when{font-size:11px;color:var(--text-muted);margin-bottom:.5rem;}
+.order-card-m .m-cust{font-size:13px;color:var(--text-dark);margin-bottom:.4rem;}
+.order-card-m .m-foot{display:flex;justify-content:space-between;align-items:center;margin-top:.5rem;}
+
+@media (max-width:980px){
+  .stat-grid{grid-template-columns:repeat(2,1fr);}
+  .dash-header{padding:1.75rem 1.5rem;}
+  .dash-body{padding:1.5rem;}
+  .orders-wrap table{display:none;}
+  .mobile-orders{display:block;}
+}
+@media (max-width:480px){
+  .stat-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN VIEW ═══ -->
+<div class="view active" id="loginView">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-logo">Arco<span>.</span></div>
+      <div class="login-sub">Admin — Orders Dashboard</div>
+
+      <form id="loginForm" onsubmit="return handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-input" id="loginUser" autocomplete="username" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="loginPass" autocomplete="current-password" required />
+        </div>
+        <button type="submit" class="login-btn" id="loginBtn">
+          <span class="spinner" id="loginSpinner"></span>
+          <span id="loginBtnText">Log In</span>
+        </button>
+        <div class="login-error" id="loginError">Incorrect username or password.</div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD VIEW ═══ -->
+<div class="view" id="dashView">
+  <div class="dash-header">
+    <div class="dash-title">Orders Dashboard</div>
+    <div class="dash-actions">
+      <button class="icon-btn" onclick="loadOrders()" title="Refresh">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+      </button>
+      <button class="logout-btn" onclick="handleLogout()">Log Out</button>
+    </div>
+  </div>
+
+  <div class="dash-body">
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Orders</div>
+        <div class="stat-value" id="statTotalOrders">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Revenue</div>
+        <div class="stat-value" id="statTotalRevenue">₹0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Today's Orders</div>
+        <div class="stat-value" id="statTodayOrders">0</div>
+        <div class="stat-sub" id="statTodayDate"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Today's Revenue</div>
+        <div class="stat-value" id="statTodayRevenue">₹0</div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <input type="text" id="searchOrders" placeholder="Search by name, phone or order ID..." oninput="filterOrders()" />
+      <select id="filterType" onchange="filterOrders()">
+        <option value="">All Types</option>
+        <option value="Pickup">Pickup</option>
+        <option value="Delivery">Delivery</option>
+      </select>
+      <select id="filterPayment" onchange="filterOrders()">
+        <option value="">All Payments</option>
+        <option value="COD">Cash</option>
+        <option value="UPI">UPI</option>
+        <option value="Card">Card</option>
+      </select>
+      <button class="refresh-btn" id="refreshBtn" onclick="loadOrders()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+        Refresh
+      </button>
+    </div>
+
+    <div class="orders-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Date &amp; Time</th>
+            <th>Customer</th>
+            <th>Type</th>
+            <th>Payment</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTableBody"></tbody>
+      </table>
+      <div class="mobile-orders" id="mobileOrders"></div>
+      <div class="loading-msg" id="loadingMsg" style="display:none;">
+        <div class="spin-icon"></div>
+        <div>Loading orders...</div>
+      </div>
+      <div class="empty-msg" id="emptyMsg" style="display:none;">No orders found.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══ CONFIG ═══
+   Replace with your deployed Google Apps Script Web App URL
+   (same one used on order.html for GAS_URL). */
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxWu3gtyurAKShGUjwhjNaKetC2pD51Fil1Qu6phuqwPJgFF6KRhtkLHOg8I4FCEjcc/exec';
+
+/* ─── VIEW SWITCH (fixed fade in/out) ─────────────── */
+function showView(id){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ─── SESSION ──────────────────────────────────────── */
+function getSessionKey(){ return sessionStorage.getItem('arco_admin_key'); }
+function setSessionKey(key){ sessionStorage.setItem('arco_admin_key', key); }
+function clearSessionKey(){ sessionStorage.removeItem('arco_admin_key'); }
+
+/* ─── LOGIN ────────────────────────────────────────── */
+async function handleLogin(e){
+  e.preventDefault();
+  const username = document.getElementById('loginUser').value.trim();
+  const password = document.getElementById('loginPass').value;
+  const btn = document.getElementById('loginBtn');
+  const spinner = document.getElementById('loginSpinner');
+  const btnText = document.getElementById('loginBtnText');
+  const errorEl = document.getElementById('loginError');
+
+  errorEl.classList.remove('show');
+  btn.disabled = true;
+  spinner.classList.add('show');
+  btnText.textContent = 'Checking...';
+
+  try {
+    if (!GAS_URL || GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE') {
+      // Local fallback so the page still works before GAS is wired up.
+      if (username === 'admin' && password === 'arco123') {
+        setSessionKey('local-demo-key');
+        onLoginSuccess();
+      } else {
+        errorEl.classList.add('show');
+      }
+    } else {
+      const res = await fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'login', username, password }),
+      });
+      const data = await res.json();
+      if (data.success && data.key) {
+        setSessionKey(data.key);
+        onLoginSuccess();
+      } else {
+        errorEl.classList.add('show');
+      }
+    }
+  } catch (err) {
+    errorEl.textContent = 'Something went wrong. Please try again.';
+    errorEl.classList.add('show');
+  } finally {
+    btn.disabled = false;
+    spinner.classList.remove('show');
+    btnText.textContent = 'Log In';
+  }
+  return false;
+}
+
+function onLoginSuccess(){
+  showView('dashView');
+  loadOrders();
+}
+
+function handleLogout(){
+  clearSessionKey();
+  document.getElementById('loginForm').reset();
+  showView('loginView');
+}
+
+/* ─── ORDERS DATA ──────────────────────────────────── */
+let allOrders = [];
+
+async function loadOrders(){
+  const loadingMsg = document.getElementById('loadingMsg');
+  const emptyMsg = document.getElementById('emptyMsg');
+  const refreshBtn = document.getElementById('refreshBtn');
+  document.getElementById('ordersTableBody').innerHTML = '';
+  document.getElementById('mobileOrders').innerHTML = '';
+  loadingMsg.style.display = 'block';
+  emptyMsg.style.display = 'none';
+  refreshBtn.classList.add('loading');
+
+  try {
+    if (!GAS_URL || GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE') {
+      allOrders = demoOrders();
+    } else {
+      const key = getSessionKey();
+      const res = await fetch(`${GAS_URL}?action=orders&key=${encodeURIComponent(key)}`);
+      const data = await res.json();
+      allOrders = data.orders || [];
+    }
+  } catch (err) {
+    allOrders = [];
+  }
+
+  loadingMsg.style.display = 'none';
+  refreshBtn.classList.remove('loading');
+  renderStats();
+  filterOrders();
+}
+
+function demoOrders(){
+  const now = new Date();
+  return [
+    { order_id:'ARC-1042', timestamp: now.toISOString(), customer_name:'Rhea Kapoor', phone:'9876543210', email:'rhea@example.com', order_type:'Delivery', payment_method:'UPI', address:'12 MG Road', total:460, items:[{item_name:'Teal Latte',qty:2,subtotal:360},{item_name:'Pain au Chocolat',qty:1,subtotal:120}] },
+    { order_id:'ARC-1041', timestamp: new Date(now-3600000).toISOString(), customer_name:'Arjun Mehta', phone:'9988776655', email:'', order_type:'Pickup', payment_method:'COD', address:'', total:260, items:[{item_name:'Shakshuka',qty:1,subtotal:260}] },
+    { order_id:'ARC-1040', timestamp: new Date(now-90000000).toISOString(), customer_name:'Sneha Iyer', phone:'9123456780', email:'sneha@example.com', order_type:'Delivery', payment_method:'Card', address:'44 Park Street', total:340, items:[{item_name:'Basque Cheesecake',qty:1,subtotal:160},{item_name:'Cold Brew',qty:1,subtotal:160}] },
+  ];
+}
+
+/* ─── STATS ────────────────────────────────────────── */
+function isToday(dateStr){
+  const d = new Date(dateStr);
+  const t = new Date();
+  return d.getFullYear()===t.getFullYear() && d.getMonth()===t.getMonth() && d.getDate()===t.getDate();
+}
+
+function renderStats(){
+  const total = allOrders.length;
+  const revenue = allOrders.reduce((s,o)=>s+Number(o.total||0),0);
+  const todayOrders = allOrders.filter(o=>isToday(o.timestamp));
+  const todayRevenue = todayOrders.reduce((s,o)=>s+Number(o.total||0),0);
+
+  document.getElementById('statTotalOrders').textContent = total;
+  document.getElementById('statTotalRevenue').textContent = `₹${revenue}`;
+  document.getElementById('statTodayOrders').textContent = todayOrders.length;
+  document.getElementById('statTodayRevenue').textContent = `₹${todayRevenue}`;
+  document.getElementById('statTodayDate').textContent = new Date().toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+}
+
+/* ─── FILTER + SEARCH ──────────────────────────────── */
+function filterOrders(){
+  const q = document.getElementById('searchOrders').value.toLowerCase().trim();
+  const type = document.getElementById('filterType').value;
+  const payment = document.getElementById('filterPayment').value;
+
+  const filtered = allOrders.filter(o=>{
+    const matchesQ = !q ||
+      (o.customer_name||'').toLowerCase().includes(q) ||
+      (o.phone||'').toLowerCase().includes(q) ||
+      (o.order_id||'').toLowerCase().includes(q);
+    const matchesType = !type || o.order_type === type;
+    const matchesPayment = !payment || o.payment_method === payment;
+    return matchesQ && matchesType && matchesPayment;
+  }).sort((a,b)=> new Date(b.timestamp) - new Date(a.timestamp));
+
+  renderTable(filtered);
+  renderMobile(filtered);
+  document.getElementById('emptyMsg').style.display = filtered.length ? 'none' : 'block';
+}
+
+function paymentPillClass(p){
+  return { COD:'pill-cod', UPI:'pill-upi', Card:'pill-card' }[p] || 'pill-cod';
+}
+function typePillClass(t){
+  return t === 'Delivery' ? 'pill-delivery' : 'pill-pickup';
+}
+function fmtDate(ts){
+  const d = new Date(ts);
+  return d.toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+function itemsList(order){
+  const items = order.items || (order.items_json ? JSON.parse(order.items_json) : []);
+  return items.map(i => `<div><span>${i.qty} × ${i.item_name}</span><span>₹${i.subtotal}</span></div>`).join('');
+}
+
+/* ─── RENDER: DESKTOP TABLE ────────────────────────── */
+function renderTable(orders){
+  const body = document.getElementById('ordersTableBody');
+  body.innerHTML = orders.map((o,idx) => `
+    <tr onclick="toggleDetail(${idx})">
+      <td class="ord-id">#${o.order_id}</td>
+      <td>${fmtDate(o.timestamp)}</td>
+      <td>${o.customer_name}<br><span style="color:var(--text-muted);font-size:11.5px;">${o.phone}</span></td>
+      <td><span class="pill ${typePillClass(o.order_type)}">${o.order_type}</span></td>
+      <td><span class="pill ${paymentPillClass(o.payment_method)}">${o.payment_method}</span></td>
+      <td class="ord-total">₹${o.total}</td>
+    </tr>
+    <tr class="items-detail" id="detail-${idx}">
+      <td colspan="6">
+        <div class="items-detail-inner">${itemsList(o)}</div>
+      </td>
+    </tr>
+  `).join('');
+}
+function toggleDetail(idx){
+  const row = document.getElementById(`detail-${idx}`);
+  row.classList.toggle('show');
+}
+
+/* ─── RENDER: MOBILE CARDS ─────────────────────────── */
+function renderMobile(orders){
+  const wrap = document.getElementById('mobileOrders');
+  wrap.innerHTML = orders.map((o,idx) => `
+    <div class="order-card-m" onclick="toggleMobileDetail(${idx})">
+      <div class="m-top">
+        <span class="ord-id">#${o.order_id}</span>
+        <span class="ord-total">₹${o.total}</span>
+      </div>
+      <div class="m-when">${fmtDate(o.timestamp)}</div>
+      <div class="m-cust">${o.customer_name} · ${o.phone}</div>
+      <div class="m-foot">
+        <span class="pill ${typePillClass(o.order_type)}">${o.order_type}</span>
+        <span class="pill ${paymentPillClass(o.payment_method)}">${o.payment_method}</span>
+      </div>
+      <div class="items-detail-inner" id="mdetail-${idx}" style="display:none;margin-top:.6rem;">${itemsList(o)}</div>
+    </div>
+  `).join('');
+}
+function toggleMobileDetail(idx){
+  const el = document.getElementById(`mdetail-${idx}`);
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+/* ─── INIT: resume session if already logged in ───── */
+(function init(){
+  if (getSessionKey()) {
+    showView('dashView');
+    loadOrders();
+  } else {
+    showView('loginView');
+  }
+})();
+</script>
+</body>
+</html>
