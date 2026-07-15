@@ -179,22 +179,25 @@
 
         // ── LOAD MENU FROM GAS ─────────────────────────────────
         async function loadMenu() {
-            showSkeleton();
-            if (!GAS_URL || GAS_URL === 'https://script.google.com/macros/s/AKfycbxWu3gtyurAKShGUjwhjNaKetC2pD51Fil1Qu6phuqwPJgFF6KRhtkLHOg8I4FCEjcc/exec') {
-                loadFallback(); return;
-            }
-            try {
-                const res = await fetch(`${GAS_URL}?action=menu`);
-                const data = await res.json();
-                if (data.items && data.items.length) {
-                    allItems = data.items;
-                    buildCategoryPills(data.categories || []);
-                } else {
-                    loadFallback();
-                }
-            } catch { loadFallback(); }
-            finally { hideSkeleton(); render(); }
+    showSkeleton();
+    if (!GAS_URL || GAS_URL === 'https://script.google.com/macros/s/AKfycbxWu3gtyurAKShGUjwhjNaKetC2pD51Fil1Qu6phuqwPJgFF6KRhtkLHOg8I4FCEjcc/exec') {
+        loadFallback();
+        hideSkeleton();
+        render();
+        return;
+    }
+    try {
+        const res = await fetch(`${GAS_URL}?action=menu`);
+        const data = await res.json();
+        if (data.items && data.items.length) {
+            allItems = data.items;
+            buildCategoryPills(data.categories || []);
+        } else {
+            loadFallback();
         }
+    } catch { loadFallback(); }
+    finally { hideSkeleton(); render(); }
+}
 
         // ── FALLBACK DATA ──────────────────────────────────────
         function loadFallback() {
