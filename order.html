@@ -1118,6 +1118,7 @@
         <button class="cat-pill active" data-cat="All" onclick="filterCat('All', this)">All</button>
       </div>
 
+      <div id="debugBanner" style="display:none;background:#fdecea;border:1px solid #f5b7b1;color:#a93226;padding:12px 16px;border-radius:10px;margin-bottom:1rem;font-size:12.5px;line-height:1.6;"></div>
       <div class="menu-grid" id="menuGrid"></div>
       <div class="empty-state" id="emptyState">
         <div class="e-icon">🔍</div>
@@ -1317,12 +1318,28 @@
 
     /* ─── LOAD MENU ───────────────────────────────────── */
     async function loadMenu() {
-      if (typeof GAS_URL !== 'undefined' && GAS_URL && GAS_URL !== 'https://script.google.com/macros/s/AKfycbxWu3gtyurAKShGUjwhjNaKetC2pD51Fil1Qu6phuqwPJgFF6KRhtkLHOg8I4FCEjcc/exec') {
+      const isPlaceholder = typeof GAS_URL === 'undefined' || !GAS_URL || GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE' || GAS_URL === 'https://script.google.com/macros/s/AKfycbxWu3gtyurAKShGUjwhjNaKetC2pD51Fil1Qu6phuqwPJgFF6KRhtkLHOg8I4FCEjcc/exec';
+      const banner = document.getElementById('debugBanner');
+      const showDebug = (msg) => { banner.style.display = 'block'; banner.textContent = 'Debug: ' + msg; };
+
+      if (!isPlaceholder) {
         try {
           const res = await fetch(`${GAS_URL}?action=menu`);
+          if (!res.ok) { showDebug(`GAS request failed with status ${res.status}. Check your deployment's access settings (should be "Anyone").`); }
           const data = await res.json();
-          if (data.items && data.items.length) { allItems = data.items.filter(i => i.is_available !== 'false' && i.is_available !== false); buildCats(); render(); return; }
-        } catch { }
+          if (data.error) {
+            showDebug(`Apps Script returned an error: "${data.error}". Check SHEET_ID in Code.gs.`);
+          } else if (!data.items || !data.items.length) {
+            showDebug(`Your Sheet returned 0 menu rows. Check the "Menu" tab has data below the header row.`);
+          } else {
+            allItems = data.items.filter(i => i && i.name && i.is_available !== 'false' && i.is_available !== false);
+            if (allItems.length) { buildCats(); render(); return; }
+            showDebug(`Got ${data.items.length} row(s) from your Sheet, but all were filtered out — check the "name" and "is_available" columns aren't blank/typo'd.`);
+          }
+        } catch (err) {
+          showDebug(`Could not reach your GAS_URL (${err.message}). Check the deployment URL in app.js is correct and the deployment is live.`);
+          console.error('Menu load failed:', err);
+        }
       }
       allItems = [
         { id: '1', name: 'Teal Latte', category: 'Coffee', price: '180', description: 'Butterfly pea flower & oat milk.', tags: 'Signature', is_special: 'true' },
@@ -1342,7 +1359,7 @@
     }
 
     function buildCats() {
-      const cats = [...new Set(allItems.map(i => i.category))];
+      const cats = [...new Set(allItems.map(i => i.category).filter(Boolean))];
       const scroll = document.getElementById('catScroll');
       cats.forEach(cat => {
         const btn = document.createElement('button');
@@ -1369,8 +1386,9 @@
     function getFiltered() {
       const q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
       return allItems.filter(item => {
+        if (!item || !item.name) return false;
         const catMatch = currentCat === 'All' || item.category === currentCat;
-        const searchMatch = !q || item.name.toLowerCase().includes(q) || (item.description || '').toLowerCase().includes(q);
+        const searchMatch = !q || (item.name || '').toLowerCase().includes(q) || (item.description || '').toLowerCase().includes(q);
         return catMatch && searchMatch;
       });
     }
@@ -1384,11 +1402,13 @@
       grid.style.display = items.length ? 'grid' : 'none';
 
       grid.innerHTML = items.map((item, i) => {
+        const category = item.category || 'Other';
+        const price = item.price || 0;
         const tags = (item.tags || '').split(',').map(t => t.trim()).filter(Boolean);
         const isSpecial = item.is_special === 'true' || item.is_special === true;
         const isVeg = tags.includes('Vegan') || tags.includes('Vegetarian');
         const badge = isSpecial ? `<span class="card-badge badge-special">Special</span>` : isVeg ? `<span class="card-badge badge-veg">Vegan</span>` : '';
-        const imgHTML = item.image_url ? `<img src="${item.image_url}" alt="${item.name}" loading="lazy" />` : `<span class="card-emoji">${emoji(item.category)}</span>`;
+        const imgHTML = item.image_url ? `<img src="${item.image_url}" alt="${item.name}" loading="lazy" />` : `<span class="card-emoji">${emoji(category)}</span>`;
         const key = item.id || item.name;
         const qty = cart[key] ? cart[key].qty : 0;
 
@@ -1396,13 +1416,13 @@
     <article class="menu-card" style="animation-delay:${i * 50}ms">
       <div class="card-img">${imgHTML}${badge}</div>
       <div class="card-body">
-        <div class="card-category">${item.category}</div>
+        <div class="card-category">${category}</div>
         <div class="card-name">${item.name}</div>
         <div class="card-desc">${item.description || ''}</div>
         <div class="card-footer">
-          <span class="card-price">₹${item.price}</span>
+          <span class="card-price">₹${price}</span>
           <div id="ctrl-${key}">
-            ${qty > 0 ? stepperHTML(key, qty) : `<button class="add-btn" onclick="addToCart('${key}', '${escapeStr(item.name)}', ${item.price}, '${item.category}')">Add</button>`}
+            ${qty > 0 ? stepperHTML(key, qty) : `<button class="add-btn" onclick="addToCart('${key}', '${escapeStr(item.name)}', ${price}, '${escapeStr(category)}')">Add</button>`}
           </div>
         </div>
       </div>
@@ -1446,7 +1466,7 @@
         el.innerHTML = stepperHTML(key, cart[key].qty);
       } else {
         const item = allItems.find(i => (i.id || i.name) === key);
-        if (item) el.innerHTML = `<button class="add-btn" onclick="addToCart('${key}', '${escapeStr(item.name)}', ${item.price}, '${item.category}')">Add</button>`;
+        if (item) el.innerHTML = `<button class="add-btn" onclick="addToCart('${key}', '${escapeStr(item.name)}', ${item.price || 0}, '${escapeStr(item.category || 'Other')}')">Add</button>`;
       }
     }
 
@@ -1611,7 +1631,7 @@
       let emailSent = false;
 
       try {
-        if (typeof GAS_URL !== 'undefined' && GAS_URL && GAS_URL !== 'https://script.google.com/macros/s/AKfycbxWu3gtyurAKShGUjwhjNaKetC2pD51Fil1Qu6phuqwPJgFF6KRhtkLHOg8I4FCEjcc/exec') {
+        if (typeof GAS_URL !== 'undefined' && GAS_URL && GAS_URL !== 'YOUR_GAS_WEB_APP_URL_HERE') {
           const res = await fetch(GAS_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain' },
