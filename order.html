@@ -1318,7 +1318,7 @@
 
     /* ─── LOAD MENU ───────────────────────────────────── */
     async function loadMenu() {
-      const isPlaceholder = typeof GAS_URL === 'undefined' || !GAS_URL || GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE' || GAS_URL === 'https://script.google.com/macros/s/AKfycbxWu3gtyurAKShGUjwhjNaKetC2pD51Fil1Qu6phuqwPJgFF6KRhtkLHOg8I4FCEjcc/exec';
+      const isPlaceholder = typeof GAS_URL === 'undefined' || !GAS_URL || GAS_URL === 'https://script.google.com/macros/s/AKfycbxWu3gtyurAKShGUjwhjNaKetC2pD51Fil1Qu6phuqwPJgFF6KRhtkLHOg8I4FCEjcc/exec' || GAS_URL === 'https://script.google.com/macros/s/AKfycbxWu3gtyurAKShGUjwhjNaKetC2pD51Fil1Qu6phuqwPJgFF6KRhtkLHOg8I4FCEjcc/exec';
       const banner = document.getElementById('debugBanner');
       const showDebug = (msg) => { banner.style.display = 'block'; banner.textContent = 'Debug: ' + msg; };
 
