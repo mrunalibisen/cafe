@@ -966,6 +966,23 @@
       line-height: 1.5;
     }
 
+    /* ─── ERROR BANNER (order submit failure) ─────────── */
+    .submit-error {
+      display: none;
+      background: #fdecea;
+      border: 1px solid #f5b7b1;
+      color: #a93226;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      font-size: 12.5px;
+      line-height: 1.6;
+    }
+
+    .submit-error.show {
+      display: block;
+    }
+
     /* ─── TOAST ───────────────────────────────────────── */
     .toast {
       position: fixed;
@@ -1163,6 +1180,8 @@
         <div class="modal-title">Almost there</div>
         <div class="modal-sub" id="modalSub">A few details and we'll get cooking.</div>
 
+        <div class="submit-error" id="submitError"></div>
+
         <div class="order-summary-mini" id="checkoutSummary"></div>
 
         <form id="orderForm" onsubmit="return submitOrder(event)">
@@ -1318,7 +1337,7 @@
 
     /* ─── LOAD MENU ───────────────────────────────────── */
     async function loadMenu() {
-      const isPlaceholder = typeof GAS_URL === 'undefined' || !GAS_URL || GAS_URL === 'https://script.google.com/macros/s/AKfycbxWu3gtyurAKShGUjwhjNaKetC2pD51Fil1Qu6phuqwPJgFF6KRhtkLHOg8I4FCEjcc/exec' || GAS_URL === 'https://script.google.com/macros/s/AKfycbxWu3gtyurAKShGUjwhjNaKetC2pD51Fil1Qu6phuqwPJgFF6KRhtkLHOg8I4FCEjcc/exec';
+      const isPlaceholder = typeof GAS_URL === 'undefined' || !GAS_URL || GAS_URL === 'https://script.google.com/macros/s/AKfycbxWu3gtyurAKShGUjwhjNaKetC2pD51Fil1Qu6phuqwPJgFF6KRhtkLHOg8I4FCEjcc/exec';
       const banner = document.getElementById('debugBanner');
       const showDebug = (msg) => { banner.style.display = 'block'; banner.textContent = 'Debug: ' + msg; };
 
@@ -1540,6 +1559,7 @@
       if (getCartArray().length === 0) return;
       document.getElementById('formState').style.display = 'block';
       document.getElementById('successState').style.display = 'none';
+      document.getElementById('submitError').classList.remove('show');
       document.getElementById('modalSub').textContent = orderType === 'Delivery'
         ? "A few details and we'll get it delivered."
         : "A few details and we'll get cooking.";
@@ -1570,6 +1590,10 @@
     async function submitOrder(e) {
       e.preventDefault();
       let valid = true;
+
+      const errBox = document.getElementById('submitError');
+      errBox.classList.remove('show');
+      errBox.textContent = '';
 
       const name = document.getElementById('custName').value.trim();
       const phone = document.getElementById('custPhone').value.trim();
@@ -1627,24 +1651,44 @@
       spinner.classList.add('show');
       btnText.textContent = 'Placing order...';
 
-      let orderId = 'ARC-' + Math.floor(1000 + Math.random() * 9000);
-      let emailSent = false;
+      const hasBackend = typeof GAS_URL !== 'undefined' && GAS_URL && GAS_URL !== 'https://script.google.com/macros/s/AKfycbxWu3gtyurAKShGUjwhjNaKetC2pD51Fil1Qu6phuqwPJgFF6KRhtkLHOg8I4FCEjcc/exec';
 
       try {
-        if (typeof GAS_URL !== 'undefined' && GAS_URL && GAS_URL !== 'YOUR_GAS_WEB_APP_URL_HERE') {
+        if (hasBackend) {
+          // Real backend configured — order is ONLY confirmed if the
+          // server actually accepts and returns an order_id. No more
+          // faking success when the request fails or the Sheet rejects it.
           const res = await fetch(GAS_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify(payload),
           });
+
+          if (!res.ok) {
+            throw new Error(`Server responded with status ${res.status}. Please try again or call us directly.`);
+          }
+
           const data = await res.json();
-          if (data.order_id) orderId = data.order_id;
-          emailSent = !!data.email_sent;
+
+          if (data.error) {
+            throw new Error(`Order could not be saved: ${data.error}`);
+          }
+          if (!data.order_id) {
+            throw new Error('Server did not confirm the order (no order ID returned). Please try again.');
+          }
+
+          showSuccess(data.order_id, { arr, subtotal, delivery, total, email, emailSent: !!data.email_sent });
+          clearCart();
+        } else {
+          // No backend configured at all — be honest about it instead of
+          // faking a random order ID and pretending it was saved anywhere.
+          throw new Error('Online ordering is not fully set up yet (no order system connected). Please call us to place this order, or try again later.');
         }
-        showSuccess(orderId, { arr, subtotal, delivery, total, email, emailSent });
-        clearCart();
       } catch (err) {
-        showToast("Couldn't place order — please try again.");
+        errBox.textContent = err.message || "Couldn't place your order — please try again or call us directly.";
+        errBox.classList.add('show');
+        showToast("Order not placed — see details above.");
+        console.error('Order submit failed:', err);
       } finally {
         btn.disabled = false;
         spinner.classList.remove('show');
