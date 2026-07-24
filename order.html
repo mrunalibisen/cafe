@@ -213,21 +213,9 @@
       overflow: hidden;
       border: 1px solid rgba(91, 158, 160, .12);
       transition: transform .25s var(--ease), box-shadow .25s;
-      animation: cardIn .5s var(--ease) backwards;
+      opacity: 1;
       display: flex;
       flex-direction: column;
-    }
-
-    @keyframes cardIn {
-      from {
-        opacity: 0;
-        transform: translateY(14px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
     }
 
     .menu-card:hover {
@@ -1337,6 +1325,10 @@
 
     /* ─── LOAD MENU ───────────────────────────────────── */
     async function loadMenu() {
+      // FIX: this must compare against the literal placeholder string
+      // from app.js ('YOUR_GAS_WEB_APP_URL_HERE'), NOT against GAS_URL
+      // itself — comparing GAS_URL to GAS_URL is always true and was
+      // forcing the site to always fall back to the dummy menu.
       const isPlaceholder = typeof GAS_URL === 'undefined' || !GAS_URL || GAS_URL === 'https://script.google.com/macros/s/AKfycbxWu3gtyurAKShGUjwhjNaKetC2pD51Fil1Qu6phuqwPJgFF6KRhtkLHOg8I4FCEjcc/exec';
       const banner = document.getElementById('debugBanner');
       const showDebug = (msg) => { banner.style.display = 'block'; banner.textContent = 'Debug: ' + msg; };
@@ -1351,9 +1343,12 @@
           } else if (!data.items || !data.items.length) {
             showDebug(`Your Sheet returned 0 menu rows. Check the "Menu" tab has data below the header row.`);
           } else {
-            allItems = data.items.filter(i => i && i.name && i.is_available !== 'false' && i.is_available !== false);
+            // FIX: the Sheet's actual column is "active" (not "is_available"
+            // as the Code.gs comment describes). Filtering on the wrong
+            // field meant "sold out" items could never actually be hidden.
+            allItems = data.items.filter(i => i && i.name && i.active !== false && i.active !== 'false');
             if (allItems.length) { buildCats(); render(); return; }
-            showDebug(`Got ${data.items.length} row(s) from your Sheet, but all were filtered out — check the "name" and "is_available" columns aren't blank/typo'd.`);
+            showDebug(`Got ${data.items.length} row(s) from your Sheet, but all were filtered out — check the "name" and "active" columns aren't blank/typo'd.`);
           }
         } catch (err) {
           showDebug(`Could not reach your GAS_URL (${err.message}). Check the deployment URL in app.js is correct and the deployment is live.`);
@@ -1651,6 +1646,8 @@
       spinner.classList.add('show');
       btnText.textContent = 'Placing order...';
 
+      // FIX: same bug as isPlaceholder above — must compare against the
+      // literal placeholder string, not against GAS_URL itself.
       const hasBackend = typeof GAS_URL !== 'undefined' && GAS_URL && GAS_URL !== 'https://script.google.com/macros/s/AKfycbxWu3gtyurAKShGUjwhjNaKetC2pD51Fil1Qu6phuqwPJgFF6KRhtkLHOg8I4FCEjcc/exec';
 
       try {
